@@ -5,6 +5,7 @@
   --glow:rgba(255,255,255,.6);
   --green:#22c55e;
   --red:#ef4444;
+  --accent:#38bdf8;
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -24,11 +25,11 @@ body{
 
 @media(min-width:768px){.app{max-width:600px}}
 
-.page{display:none;animation:fade .4s ease}
+.page{display:none;animation:fade .35s ease}
 .page.active{display:block}
 
 @keyframes fade{
-  from{opacity:0;transform:translateY(16px)}
+  from{opacity:0;transform:translateY(12px)}
   to{opacity:1}
 }
 
@@ -58,13 +59,15 @@ input,select,textarea,button{
   margin-bottom:10px;
 }
 
+textarea{min-height:90px}
+
 button{cursor:pointer}
 button:active{transform:scale(.96)}
 
 .primary{
   background:linear-gradient(90deg,#38bdf8,#6366f1);
   color:#000;
-  font-weight:600;
+  font-weight:700;
 }
 
 ul{list-style:none;padding:0;margin:0}
@@ -94,12 +97,7 @@ li.keluar{border-color:var(--red)}
   border-radius:10px;
   font-size:12px;
   background:#020617;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
+  border:1px solid #fff;
 }
 
 .bottom-nav{
@@ -125,6 +123,41 @@ li.keluar{border-color:var(--red)}
   text-shadow:0 0 15px #fff;
 }
 
+/* kalkulator modern */
+.calc-wrap{
+  background:linear-gradient(180deg,#020617,#0b1224);
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 0 25px var(--glow);
+}
+
+.calc-display{
+  text-align:right;
+  font-size:28px;
+  padding:16px;
+  border-radius:16px;
+  background:#000;
+  margin-bottom:12px;
+  overflow:hidden;
+}
+
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.calc-grid button{
+  padding:16px 0;
+  font-size:18px;
+  border-radius:16px;
+  font-weight:600;
+}
+
+.calc-op{background:#111827}
+.calc-ac{background:#7c2d12}
+.calc-eq{background:linear-gradient(135deg,#38bdf8,#6366f1);color:#000}
+
 /* kalender */
 .calendar-header{
   position:relative;
@@ -148,7 +181,6 @@ li.keluar{border-color:var(--red)}
   height:34px;
   padding:0;
   border-radius:10px;
-  font-size:16px;
   background:#020617;
 }
 
@@ -189,4 +221,4 @@ li.keluar{border-color:var(--red)}
 .calendar-grid .empty{border:none;box-shadow:none;background:none}
 .calendar-grid .has{background:linear-gradient(135deg,#38bdf8,#6366f1);color:#000}
 .calendar-grid .active{background:#fff;color:#000;font-weight:800}
-.calendar-grid .today{border:2px solid #38bdf8;box-shadow:0 0 25px #38bdf8}
+.calendar-grid .today{border:2px solid var(--accent);box-shadow:0 0 25px var(--accent)}
