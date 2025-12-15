@@ -10,9 +10,10 @@ function buka(id,btn){
 }
 
 function tambah(){
-  if(!nominal.value) return
+  const n = Number(nominal.value)
+  if(!n) return
   transaksi.push({
-    n:+nominal.value,
+    n:n,
     t:tipe.value,
     w:new Date().toISOString().split('T')[0]
   })
@@ -32,17 +33,22 @@ function simpan(){
 }
 
 function render(){
-  let saldo=0
+  let saldoVal = 0
   list.innerHTML=''
   transaksi.forEach((x,i)=>{
-    saldo+=x.t==='masuk'?x.n:-x.n
+    if(x.t==='masuk') saldoVal+=x.n
+    else saldoVal-=x.n
+
     list.innerHTML+=`
       <li class="${x.t}">
-        <div>${x.t.toUpperCase()}<br>Rp ${x.n.toLocaleString('id-ID')}</div>
+        <div class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
+          ${x.t.toUpperCase()}<br>Rp ${x.n.toLocaleString('id-ID')}
+        </div>
         <button class="hapus" onclick="hapus(${i})">✕</button>
       </li>`
   })
-  saldo.innerText=saldo.toLocaleString('id-ID')
+  document.getElementById('saldo').textContent =
+    saldoVal.toLocaleString('id-ID')
 }
 
 function inputCalc(v){calcVal+=v;calc.value=calcVal}
@@ -70,7 +76,7 @@ let currentYear=today.getFullYear()
 
 function renderCalendar(){
   calendar.innerHTML=''
-  monthYear.innerText=new Date(currentYear,currentMonth)
+  monthYear.textContent=new Date(currentYear,currentMonth)
     .toLocaleDateString('id-ID',{month:'long',year:'numeric'})
 
   const firstDay=new Date(currentYear,currentMonth,1).getDay()
@@ -94,11 +100,12 @@ function selectDate(d,el){
   el.classList.add('active')
   kalenderList.innerHTML=''
   const data=transaksi.filter(x=>x.w===d)
-  if(!data.length) return
   data.forEach(x=>{
     kalenderList.innerHTML+=`
       <li class="${x.t}">
-        ${x.t.toUpperCase()} - Rp ${x.n.toLocaleString('id-ID')}
+        <span class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
+          ${x.t.toUpperCase()} - Rp ${x.n.toLocaleString('id-ID')}
+        </span>
       </li>`
   })
 }
