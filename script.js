@@ -1,6 +1,5 @@
 let transaksi = JSON.parse(localStorage.getItem('trx')) || []
 let notes = JSON.parse(localStorage.getItem('notes')) || []
-let calcVal = ''
 
 function buka(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
@@ -9,6 +8,7 @@ function buka(id,btn){
   btn.classList.add('active')
 }
 
+/* keuangan */
 function tambah(){
   const n = Number(nominal.value)
   if(!n) return
@@ -33,12 +33,10 @@ function simpan(){
 }
 
 function render(){
-  let saldoVal = 0
+  let saldoVal=0
   list.innerHTML=''
   transaksi.forEach((x,i)=>{
-    if(x.t==='masuk') saldoVal+=x.n
-    else saldoVal-=x.n
-
+    saldoVal += x.t==='masuk' ? x.n : -x.n
     list.innerHTML+=`
       <li class="${x.t}">
         <div class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
@@ -47,29 +45,65 @@ function render(){
         <button class="hapus" onclick="hapus(${i})">✕</button>
       </li>`
   })
-  document.getElementById('saldo').textContent =
-    saldoVal.toLocaleString('id-ID')
+  saldo.textContent=saldoVal.toLocaleString('id-ID')
 }
 
-function inputCalc(v){calcVal+=v;calc.value=calcVal}
-function hitung(){try{calcVal=eval(calcVal).toString();calc.value=calcVal}catch{calc.value='Error'}}
-function clearCalc(){calcVal='';calc.value=''}
+/* kalkulator */
+let calcVal=''
+const calcDisplay=document.getElementById('calcDisplay')
 
+function calcInput(v){
+  calcVal+=v
+  calcDisplay.textContent=calcVal
+}
+
+function calcClear(){
+  calcVal=''
+  calcDisplay.textContent='0'
+}
+
+function calcDel(){
+  calcVal=calcVal.slice(0,-1)
+  calcDisplay.textContent=calcVal||'0'
+}
+
+function calcEqual(){
+  try{
+    calcVal=eval(calcVal).toString()
+    calcDisplay.textContent=calcVal
+  }catch{
+    calcDisplay.textContent='0'
+    calcVal=''
+  }
+}
+
+/* catatan */
 function simpanCatatan(){
   if(!note.value) return
-  notes.push({text:note.value,date:new Date().toLocaleDateString('id-ID')})
+  notes.push(note.value)
   note.value=''
+  localStorage.setItem('notes',JSON.stringify(notes))
+  renderNote()
+}
+
+function hapusNote(i){
+  notes.splice(i,1)
   localStorage.setItem('notes',JSON.stringify(notes))
   renderNote()
 }
 
 function renderNote(){
   noteList.innerHTML=''
-  notes.forEach(n=>{
-    noteList.innerHTML+=`<li>${n.text}<br><small>${n.date}</small></li>`
+  notes.forEach((n,i)=>{
+    noteList.innerHTML+=`
+      <li>
+        <div>${n}</div>
+        <button class="hapus" onclick="hapusNote(${i})">✕</button>
+      </li>`
   })
 }
 
+/* kalender */
 let today=new Date()
 let currentMonth=today.getMonth()
 let currentYear=today.getFullYear()
@@ -99,8 +133,7 @@ function selectDate(d,el){
   document.querySelectorAll('.calendar-grid div').forEach(x=>x.classList.remove('active'))
   el.classList.add('active')
   kalenderList.innerHTML=''
-  const data=transaksi.filter(x=>x.w===d)
-  data.forEach(x=>{
+  transaksi.filter(x=>x.w===d).forEach(x=>{
     kalenderList.innerHTML+=`
       <li class="${x.t}">
         <span class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
