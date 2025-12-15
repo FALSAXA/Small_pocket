@@ -20,6 +20,11 @@ function tambah(){
   simpan()
 }
 
+function hapus(i){
+  transaksi.splice(i,1)
+  simpan()
+}
+
 function simpan(){
   localStorage.setItem('trx',JSON.stringify(transaksi))
   render()
@@ -29,15 +34,15 @@ function simpan(){
 function render(){
   let saldo=0
   list.innerHTML=''
-  transaksi.forEach(x=>{
+  transaksi.forEach((x,i)=>{
     saldo+=x.t==='masuk'?x.n:-x.n
     list.innerHTML+=`
       <li class="${x.t}">
-        <div>${x.t.toUpperCase()}</div>
-        <div>Rp ${x.n.toLocaleString('id-ID')}</div>
+        <div>${x.t.toUpperCase()}<br>Rp ${x.n.toLocaleString('id-ID')}</div>
+        <button class="hapus" onclick="hapus(${i})">✕</button>
       </li>`
   })
-  document.getElementById('saldo').innerText=saldo.toLocaleString('id-ID')
+  saldo.innerText=saldo.toLocaleString('id-ID')
 }
 
 function inputCalc(v){calcVal+=v;calc.value=calcVal}
@@ -89,7 +94,7 @@ function selectDate(d,el){
   el.classList.add('active')
   kalenderList.innerHTML=''
   const data=transaksi.filter(x=>x.w===d)
-  if(!data.length){kalenderList.innerHTML='<li>Tidak ada transaksi</li>';return}
+  if(!data.length) return
   data.forEach(x=>{
     kalenderList.innerHTML+=`
       <li class="${x.t}">
