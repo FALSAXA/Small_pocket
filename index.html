@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Falsaxa Pocket</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+<section id="keuangan" class="page active">
+  <h2>💰 Keuangan</h2>
+
+  <div class="card saldo">
+    <p>Saldo</p>
+    <h1>Rp <span id="saldo">0</span></h1>
+  </div>
+
+  <div class="card">
+    <input id="nominal" type="number" placeholder="Nominal">
+    <select id="tipe">
+      <option value="masuk">Pemasukan</option>
+      <option value="keluar">Pengeluaran</option>
+    </select>
+    <button class="primary" onclick="tambah()">Tambah</button>
+  </div>
+
+  <ul id="list"></ul>
+</section>
+
+<section id="kalkulator" class="page">
+  <h2>🧮 Kalkulator</h2>
+  <div class="card">
+    <input id="calc" readonly>
+    <div class="grid">
+      <button onclick="inputCalc('7')">7</button>
+      <button onclick="inputCalc('8')">8</button>
+      <button onclick="inputCalc('9')">9</button>
+      <button onclick="inputCalc('/')">÷</button>
+      <button onclick="inputCalc('4')">4</button>
+      <button onclick="inputCalc('5')">5</button>
+      <button onclick="inputCalc('6')">6</button>
+      <button onclick="inputCalc('*')">×</button>
+      <button onclick="inputCalc('1')">1</button>
+      <button onclick="inputCalc('2')">2</button>
+      <button onclick="inputCalc('3')">3</button>
+      <button onclick="inputCalc('-')">−</button>
+      <button onclick="inputCalc('0')">0</button>
+      <button onclick="hitung()">=</button>
+      <button onclick="clearCalc()">C</button>
+      <button onclick="inputCalc('+')">+</button>
+    </div>
+  </div>
+</section>
+
+<section id="kalender" class="page">
+  <h2>📅 Kalender</h2>
+
+  <div class="card">
+    <div class="calendar-header">
+      <button onclick="prevMonth()">‹</button>
+      <span id="monthYear"></span>
+      <button onclick="nextMonth()">›</button>
+    </div>
+
+    <div class="calendar-days">
+      <div>Min</div><div>Sen</div><div>Sel</div>
+      <div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+    </div>
+
+    <div class="calendar-grid" id="calendar"></div>
+  </div>
+
+  <ul id="kalenderList"></ul>
+</section>
+
+<section id="catatan" class="page">
+  <h2>📝 Catatan</h2>
+  <div class="card">
+    <textarea id="note" placeholder="Tulis catatan..."></textarea>
+    <button class="primary" onclick="simpanCatatan()">Simpan</button>
+  </div>
+  <ul id="noteList"></ul>
+</section>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="active" onclick="buka('keuangan',this)">💰<br>Keuangan</button>
+  <button onclick="buka('kalkulator',this)">🧮<br>Kalkulator</button>
+  <button onclick="buka('kalender',this)">📅<br>Kalender</button>
+  <button onclick="buka('catatan',this)">📝<br>Catatan</button>
+</nav>
+
+<script src="script.js"></script>
+</body>
+</html>
