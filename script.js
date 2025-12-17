@@ -11,12 +11,14 @@ function buka(id, btn) {
 }
 
 function tambah() {
-  const n = Number(nominal.value)
+  const n = Number(document.getElementById('nominal').value)
   if (!n || n <= 0) return
   const d = new Date()
   const w = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
-  transaksi.push({ n, t: tipe.value, m: media.value, w })
-  nominal.value = ''
+  const tipe = document.getElementById('tipe').value
+  const media = document.getElementById('media').value
+  transaksi.push({ n, t: tipe, m: media, w })
+  document.getElementById('nominal').value = ''
   simpan()
 }
 
@@ -33,25 +35,34 @@ function simpan() {
 
 function render() {
   let s = 0, c = 0
+  const list = document.getElementById('list')
+  const saldoEl = document.getElementById('saldo')
+  const cashEl = document.getElementById('cash')
+  
   list.innerHTML = ''
-  transaksi.slice().reverse().forEach((x, i) => {
-    const idx = transaksi.length - 1 - i
+  
+  const sorted = [...transaksi].reverse()
+  sorted.forEach((x, i) => {
+    const originalIndex = transaksi.length - 1 - i
     const v = x.t === 'masuk' ? x.n : -x.n
     x.m === 'saldo' ? s += v : c += v
+    
     list.innerHTML += `
     <li class="${x.t}">
       <div class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
         ${x.t.toUpperCase()} ${x.m.toUpperCase()}<br>
         Rp ${x.n.toLocaleString('id-ID')}
       </div>
-      <button class="hapus" onclick="hapus(${idx})">✕</button>
+      <button class="hapus" onclick="hapus(${originalIndex})">✕</button>
     </li>`
   })
-  saldo.textContent = s.toLocaleString('id-ID')
-  cash.textContent = c.toLocaleString('id-ID')
+  
+  saldoEl.textContent = s.toLocaleString('id-ID')
+  cashEl.textContent = c.toLocaleString('id-ID')
 }
 
 function simpanCatatan() {
+  const note = document.getElementById('note')
   if (!note.value.trim()) return
   notes.push(note.value.trim())
   note.value = ''
@@ -60,13 +71,16 @@ function simpanCatatan() {
 }
 
 function renderNote() {
+  const noteList = document.getElementById('noteList')
   noteList.innerHTML = ''
-  notes.slice().reverse().forEach((n, i) => {
-    const idx = notes.length - 1 - i
+  
+  const sorted = [...notes].reverse()
+  sorted.forEach((n, i) => {
+    const originalIndex = notes.length - 1 - i
     noteList.innerHTML += `
     <li>
       <div>${n}</div>
-      <button class="hapus" onclick="hapusNote(${idx})">✕</button>
+      <button class="hapus" onclick="hapusNote(${originalIndex})">✕</button>
     </li>`
   })
 }
@@ -79,29 +93,39 @@ function hapusNote(i) {
 
 function renderCalendar() {
   const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
+  const monthYear = document.getElementById('monthYear')
+  const calendar = document.getElementById('calendar')
+  
   monthYear.textContent = `${monthNames[cm]} ${cy}`
   
-  const first = new Date(cy, cm, 1).getDay()
-  const days = new Date(cy, cm+1, 0).getDate()
+  const firstDay = new Date(cy, cm, 1).getDay()
+  const daysInMonth = new Date(cy, cm + 1, 0).getDate()
   const today = new Date()
-  const isTodayMonth = today.getMonth() === cm && today.getFullYear() === cy
+  const isCurrentMonth = today.getMonth() === cm && today.getFullYear() === cy
   
   let html = ''
   
-  for(let i=0; i<first; i++) html += '<div class="empty"></div>'
-  for(let d=1; d<=days; d++) {
-    const ds = `${cy}-${String(cm+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
-    const has = transaksi.some(x => x.w === ds)
-    const todayClass = isTodayMonth && d === today.getDate() ? 'today' : ''
-    html += `<div class="${has?'has':''} ${todayClass}" onclick="selectDate('${ds}')">${d}</div>`
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="empty"></div>'
+  }
+  
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${cy}-${String(cm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    const hasTransaction = transaksi.some(x => x.w === dateStr)
+    const isToday = isCurrentMonth && d === today.getDate()
+    
+    html += `<div class="${hasTransaction ? 'has' : ''} ${isToday ? 'today' : ''}" onclick="selectDate('${dateStr}')">${d}</div>`
   }
   
   calendar.innerHTML = html
 }
 
 function selectDate(d) {
+  const kalenderList = document.getElementById('kalenderList')
   kalenderList.innerHTML = ''
-  transaksi.filter(x => x.w === d).forEach(x => {
+  
+  const filtered = transaksi.filter(x => x.w === d)
+  filtered.forEach(x => {
     kalenderList.innerHTML += `
     <li class="${x.t}">
       <span class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
@@ -113,14 +137,20 @@ function selectDate(d) {
 
 function prevMonth() {
   cm--
-  if(cm < 0) { cm = 11; cy-- }
+  if (cm < 0) {
+    cm = 11
+    cy--
+  }
   renderCalendar()
   selectDate('')
 }
 
 function nextMonth() {
   cm++
-  if(cm > 11) { cm = 0; cy++ }
+  if (cm > 11) {
+    cm = 0
+    cy++
+  }
   renderCalendar()
   selectDate('')
 }
