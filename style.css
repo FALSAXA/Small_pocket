@@ -1,14 +1,13 @@
 :root{
   --bg:#020617;
   --card:#0b1224;
-  --border:#fff;
   --glow:rgba(255,255,255,.6);
   --green:#22c55e;
   --red:#ef4444;
   --accent:#38bdf8;
 }
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -18,22 +17,14 @@ body{
 }
 
 .app{
-  max-width:480px;
+  width:100%;
+  max-width:600px;
   margin:auto;
-  padding:16px 16px 110px;
+  padding:16px 16px 120px;
 }
 
-@media(min-width:768px){
-  .app{max-width:600px}
-}
-
-.page{display:none;animation:fade .35s ease}
+.page{display:none}
 .page.active{display:block}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1}
-}
 
 h2{text-align:center}
 
@@ -61,11 +52,6 @@ input,select,textarea,button{
   margin-bottom:10px;
 }
 
-textarea{min-height:90px}
-
-button{cursor:pointer}
-button:active{transform:scale(.96)}
-
 .primary{
   background:linear-gradient(90deg,#38bdf8,#6366f1);
   color:#000;
@@ -83,8 +69,6 @@ li{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:8px;
-  box-shadow:0 0 18px var(--glow);
 }
 
 li.masuk{border-color:var(--green)}
@@ -97,7 +81,6 @@ li.keluar{border-color:var(--red)}
   width:auto;
   padding:6px 10px;
   border-radius:10px;
-  font-size:12px;
   background:#020617;
   border:1px solid #fff;
 }
@@ -122,58 +105,26 @@ li.keluar{border-color:var(--red)}
 
 .bottom-nav button.active{
   color:#fff;
-  text-shadow:0 0 15px #fff;
 }
 
 .calendar-header{
-  position:relative;
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  justify-content:center;
   margin-bottom:12px;
-  padding:12px 16px;
-  border-radius:16px;
-  background:linear-gradient(135deg,#020617,#0b1224);
-  box-shadow:0 0 20px var(--glow);
 }
 
-.calendar-header span{
-  font-size:16px;
-  font-weight:700;
-}
-
-.calendar-header button{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:34px;
-  height:34px;
-  padding:0;
-  border-radius:10px;
-  background:#020617;
-}
-
-.calendar-header button:first-child{left:12px}
-.calendar-header button:last-child{right:12px}
-
-.calendar-days{
+.calendar-days,
+.calendar-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   gap:8px;
-  margin-bottom:6px;
 }
 
 .calendar-days div{
   text-align:center;
   font-size:12px;
-  font-weight:600;
   color:#9ca3af;
-}
-
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
 }
 
 .calendar-grid div{
@@ -183,13 +134,11 @@ li.keluar{border-color:var(--red)}
   justify-content:center;
   border:1px solid #fff;
   border-radius:14px;
-  box-shadow:0 0 14px var(--glow);
   background:#020617;
 }
 
 .calendar-grid .empty{
   border:none;
-  box-shadow:none;
   background:none;
 }
 
@@ -198,13 +147,6 @@ li.keluar{border-color:var(--red)}
   color:#000;
 }
 
-.calendar-grid .active{
-  background:#fff;
-  color:#000;
-  font-weight:800;
-}
-
 .calendar-grid .today{
   border:2px solid var(--accent);
-  box-shadow:0 0 25px var(--accent);
 }
