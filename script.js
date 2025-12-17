@@ -9,7 +9,6 @@ function buka(id, btn) {
   document.getElementById(id).classList.add('active')
   document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'))
   btn.classList.add('active')
-  if (id === 'kalender') setTimeout(renderCalendar, 50)
 }
 
 function tambah() {
@@ -23,10 +22,8 @@ function tambah() {
 }
 
 function hapus(i) {
-  if (confirm('Hapus transaksi?')) {
-    transaksi.splice(i, 1)
-    simpan()
-  }
+  transaksi.splice(i, 1)
+  simpan()
 }
 
 function simpan() {
@@ -38,8 +35,7 @@ function simpan() {
 function render() {
   let s = 0, c = 0
   list.innerHTML = ''
-  transaksi.slice().reverse().forEach((x, i) => {
-    const idx = transaksi.length - 1 - i
+  transaksi.forEach((x, i) => {
     const v = x.t === 'masuk' ? x.n : -x.n
     x.m === 'saldo' ? s += v : c += v
     list.innerHTML += `
@@ -48,7 +44,7 @@ function render() {
         ${x.t.toUpperCase()} ${x.m.toUpperCase()}<br>
         Rp ${x.n.toLocaleString('id-ID')}
       </div>
-      <button class="hapus" onclick="hapus(${idx})">✕</button>
+      <button class="hapus" onclick="hapus(${i})">✕</button>
     </li>`
   })
   saldo.textContent = s.toLocaleString('id-ID')
@@ -57,7 +53,7 @@ function render() {
 
 function simpanCatatan() {
   if (!note.value.trim()) return
-  notes.push({ text: note.value.trim(), date: new Date().toISOString() })
+  notes.push(note.value.trim())
   note.value = ''
   localStorage.setItem('notes', JSON.stringify(notes))
   renderNote()
@@ -65,52 +61,51 @@ function simpanCatatan() {
 
 function renderNote() {
   noteList.innerHTML = ''
-  notes.slice().reverse().forEach((n, i) => {
-    const idx = notes.length - 1 - i
+  notes.forEach((n, i) => {
     noteList.innerHTML += `
     <li>
-      <div>${n.text}</div>
-      <button class="hapus" onclick="hapusNote(${idx})">✕</button>
+      <div>${n}</div>
+      <button class="hapus" onclick="hapusNote(${i})">✕</button>
     </li>`
   })
 }
 
 function hapusNote(i) {
-  if (confirm('Hapus catatan?')) {
-    notes.splice(i, 1)
-    localStorage.setItem('notes', JSON.stringify(notes))
-    renderNote()
-  }
+  notes.splice(i, 1)
+  localStorage.setItem('notes', JSON.stringify(notes))
+  renderNote()
 }
 
 function renderCalendar() {
-  calendar.innerHTML = ''
   const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
   monthYear.textContent = `${monthNames[cm]} ${cy}`
-  const first = new Date(cy, cm, 1).getDay()
-  const days = new Date(cy, cm+1, 0).getDate()
-  const today = new Date().toISOString().split('T')[0]
-
-  for(let i=0; i<first; i++) calendar.innerHTML += '<div class="empty"></div>'
-  for(let d=1; d<=days; d++) {
-    const ds = `${cy}-${String(cm+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
-    const has = transaksi.some(x => x.w === ds)
-    calendar.innerHTML += `<div class="${has?'has':''}" onclick="selectDate('${ds}')">${d}</div>`
+  
+  const firstDay = new Date(cy, cm, 1).getDay()
+  const daysInMonth = new Date(cy, cm + 1, 0).getDate()
+  const today = new Date()
+  const isCurrentMonth = today.getMonth() === cm && today.getFullYear() === cy
+  
+  let html = ''
+  
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="empty"></div>'
   }
   
-  // Highlight hari ini
-  const todayDay = now.getDate()
-  const todayMonth = now.getMonth()
-  const todayYear = now.getFullYear()
-  if(todayMonth === cm && todayYear === cy) {
-    const todayCells = calendar.querySelectorAll('div:not(.empty)')
-    if(todayCells[todayDay-1]) todayCells[todayDay-1].classList.add('today')
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${cy}-${String(cm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    const hasTransaction = transaksi.some(x => x.w === dateStr)
+    const isToday = isCurrentMonth && d === today.getDate()
+    
+    html += `<div class="${hasTransaction ? 'has' : ''} ${isToday ? 'today' : ''}" onclick="selectDate('${dateStr}')">${d}</div>`
   }
+  
+  calendar.innerHTML = html
 }
 
 function selectDate(d) {
   kalenderList.innerHTML = ''
-  transaksi.filter(x => x.w === d).forEach(x => {
+  const filtered = transaksi.filter(x => x.w === d)
+  filtered.forEach(x => {
     kalenderList.innerHTML += `
     <li class="${x.t}">
       <span class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
@@ -122,14 +117,20 @@ function selectDate(d) {
 
 function prevMonth() {
   cm--
-  if(cm < 0) { cm = 11; cy-- }
+  if (cm < 0) {
+    cm = 11
+    cy--
+  }
   renderCalendar()
   selectDate('')
 }
 
 function nextMonth() {
   cm++
-  if(cm > 11) { cm = 0; cy++ }
+  if (cm > 11) {
+    cm = 0
+    cy++
+  }
   renderCalendar()
   selectDate('')
 }
