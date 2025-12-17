@@ -9,10 +9,10 @@ function buka(id,btn){
 }
 
 function tambah(){
-  const n = Number(nominal.value)
+  const n=Number(nominal.value)
   if(!n) return
   transaksi.push({
-    n:n,
+    n,
     t:tipe.value,
     m:media.value,
     w:new Date().toISOString().split('T')[0]
@@ -33,24 +33,23 @@ function simpan(){
 }
 
 function render(){
-  let saldoVal=0
-  let cashVal=0
+  let s=0,c=0
   list.innerHTML=''
   transaksi.forEach((x,i)=>{
-    const val = x.t==='masuk'?x.n:-x.n
-    if(x.m==='saldo') saldoVal+=val
-    if(x.m==='cash') cashVal+=val
+    const v=x.t==='masuk'?x.n:-x.n
+    if(x.m==='saldo') s+=v
+    else c+=v
     list.innerHTML+=`
-      <li class="${x.t}">
-        <div class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
-          ${x.t.toUpperCase()} ${x.m.toUpperCase()}<br>
-          Rp ${x.n.toLocaleString('id-ID')}
-        </div>
-        <button class="hapus" onclick="hapus(${i})">✕</button>
-      </li>`
+    <li class="${x.t}">
+      <div class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
+        ${x.t.toUpperCase()} ${x.m.toUpperCase()}<br>
+        Rp ${x.n.toLocaleString('id-ID')}
+      </div>
+      <button class="hapus" onclick="hapus(${i})">✕</button>
+    </li>`
   })
-  saldo.textContent=saldoVal.toLocaleString('id-ID')
-  cash.textContent=cashVal.toLocaleString('id-ID')
+  saldo.textContent=s.toLocaleString('id-ID')
+  cash.textContent=c.toLocaleString('id-ID')
 }
 
 function simpanCatatan(){
@@ -61,64 +60,59 @@ function simpanCatatan(){
   renderNote()
 }
 
+function renderNote(){
+  noteList.innerHTML=''
+  notes.forEach((n,i)=>{
+    noteList.innerHTML+=`
+    <li>
+      <div>${n}</div>
+      <button class="hapus" onclick="hapusNote(${i})">✕</button>
+    </li>`
+  })
+}
+
 function hapusNote(i){
   notes.splice(i,1)
   localStorage.setItem('notes',JSON.stringify(notes))
   renderNote()
 }
 
-function renderNote(){
-  noteList.innerHTML=''
-  notes.forEach((n,i)=>{
-    noteList.innerHTML+=`
-      <li>
-        <div>${n}</div>
-        <button class="hapus" onclick="hapusNote(${i})">✕</button>
-      </li>`
-  })
-}
-
-let today=new Date()
-let currentMonth=today.getMonth()
-let currentYear=today.getFullYear()
+let now=new Date()
+let m=now.getMonth()
+let y=now.getFullYear()
 
 function renderCalendar(){
   calendar.innerHTML=''
-  monthYear.textContent=new Date(currentYear,currentMonth)
-    .toLocaleDateString('id-ID',{month:'long',year:'numeric'})
+  monthYear.textContent=new Date(y,m).toLocaleDateString('id-ID',{month:'long',year:'numeric'})
+  const first=new Date(y,m,1).getDay()
+  const days=new Date(y,m+1,0).getDate()
+  const today=new Date().toISOString().split('T')[0]
 
-  const firstDay=new Date(currentYear,currentMonth,1).getDay()
-  const days=new Date(currentYear,currentMonth+1,0).getDate()
-  const todayStr=new Date().toISOString().split('T')[0]
-
-  for(let i=0;i<firstDay;i++) calendar.innerHTML+='<div class="empty"></div>'
+  for(let i=0;i<first;i++) calendar.innerHTML+='<div class="empty"></div>'
 
   for(let d=1;d<=days;d++){
-    const ds=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
     const has=transaksi.some(x=>x.w===ds)
-    const isToday=ds===todayStr
+    const isToday=ds===today
     calendar.innerHTML+=`
-      <div class="${has?'has':''} ${isToday?'today':''}"
-           onclick="selectDate('${ds}',this)">${d}</div>`
+    <div class="${has?'has':''} ${isToday?'today':''}" onclick="selectDate('${ds}')">${d}</div>`
   }
 }
 
-function selectDate(d,el){
-  document.querySelectorAll('.calendar-grid div').forEach(x=>x.classList.remove('active'))
-  el.classList.add('active')
+function selectDate(d){
   kalenderList.innerHTML=''
   transaksi.filter(x=>x.w===d).forEach(x=>{
     kalenderList.innerHTML+=`
-      <li class="${x.t}">
-        <span class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
-          ${x.t.toUpperCase()} ${x.m.toUpperCase()} - Rp ${x.n.toLocaleString('id-ID')}
-        </span>
-      </li>`
+    <li class="${x.t}">
+      <span class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
+        ${x.t.toUpperCase()} ${x.m.toUpperCase()} - Rp ${x.n.toLocaleString('id-ID')}
+      </span>
+    </li>`
   })
 }
 
-function prevMonth(){currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--}renderCalendar()}
-function nextMonth(){currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++}renderCalendar()}
+function prevMonth(){m--;if(m<0){m=11;y--}renderCalendar()}
+function nextMonth(){m++;if(m>11){m=0;y++}renderCalendar()}
 
 render()
 renderNote()
