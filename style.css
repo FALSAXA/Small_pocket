@@ -23,7 +23,9 @@ body{
   padding:16px 16px 110px;
 }
 
-@media(min-width:768px){.app{max-width:600px}}
+@media(min-width:768px){
+  .app{max-width:600px}
+}
 
 .page{display:none;animation:fade .35s ease}
 .page.active{display:block}
@@ -123,42 +125,6 @@ li.keluar{border-color:var(--red)}
   text-shadow:0 0 15px #fff;
 }
 
-/* kalkulator modern */
-.calc-wrap{
-  background:linear-gradient(180deg,#020617,#0b1224);
-  border-radius:22px;
-  padding:14px;
-  box-shadow:0 0 25px var(--glow);
-}
-
-.calc-display{
-  text-align:right;
-  font-size:28px;
-  padding:16px;
-  border-radius:16px;
-  background:#000;
-  margin-bottom:12px;
-  overflow:hidden;
-}
-
-.calc-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-
-.calc-grid button{
-  padding:16px 0;
-  font-size:18px;
-  border-radius:16px;
-  font-weight:600;
-}
-
-.calc-op{background:#111827}
-.calc-ac{background:#7c2d12}
-.calc-eq{background:linear-gradient(135deg,#38bdf8,#6366f1);color:#000}
-
-/* kalender */
 .calendar-header{
   position:relative;
   display:flex;
@@ -171,7 +137,10 @@ li.keluar{border-color:var(--red)}
   box-shadow:0 0 20px var(--glow);
 }
 
-.calendar-header span{font-size:16px;font-weight:700}
+.calendar-header span{
+  font-size:16px;
+  font-weight:700;
+}
 
 .calendar-header button{
   position:absolute;
@@ -218,7 +187,24 @@ li.keluar{border-color:var(--red)}
   background:#020617;
 }
 
-.calendar-grid .empty{border:none;box-shadow:none;background:none}
-.calendar-grid .has{background:linear-gradient(135deg,#38bdf8,#6366f1);color:#000}
-.calendar-grid .active{background:#fff;color:#000;font-weight:800}
-.calendar-grid .today{border:2px solid var(--accent);box-shadow:0 0 25px var(--accent)}
+.calendar-grid .empty{
+  border:none;
+  box-shadow:none;
+  background:none;
+}
+
+.calendar-grid .has{
+  background:linear-gradient(135deg,#38bdf8,#6366f1);
+  color:#000;
+}
+
+.calendar-grid .active{
+  background:#fff;
+  color:#000;
+  font-weight:800;
+}
+
+.calendar-grid .today{
+  border:2px solid var(--accent);
+  box-shadow:0 0 25px var(--accent);
+}
