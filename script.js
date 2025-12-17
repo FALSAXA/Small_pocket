@@ -37,8 +37,7 @@ function render(){
   list.innerHTML=''
   transaksi.forEach((x,i)=>{
     const v=x.t==='masuk'?x.n:-x.n
-    if(x.m==='saldo') s+=v
-    else c+=v
+    x.m==='saldo'?s+=v:c+=v
     list.innerHTML+=`
     <li class="${x.t}">
       <div class="${x.t==='masuk'?'label-masuk':'label-keluar'}">
@@ -78,20 +77,20 @@ function hapusNote(i){
 }
 
 let now=new Date()
-let m=now.getMonth()
-let y=now.getFullYear()
+let cm=now.getMonth()
+let cy=now.getFullYear()
 
 function renderCalendar(){
   calendar.innerHTML=''
-  monthYear.textContent=new Date(y,m).toLocaleDateString('id-ID',{month:'long',year:'numeric'})
-  const first=new Date(y,m,1).getDay()
-  const days=new Date(y,m+1,0).getDate()
+  monthYear.textContent=new Date(cy,cm).toLocaleDateString('id-ID',{month:'long',year:'numeric'})
+  const first=new Date(cy,cm,1).getDay()
+  const days=new Date(cy,cm+1,0).getDate()
   const today=new Date().toISOString().split('T')[0]
 
   for(let i=0;i<first;i++) calendar.innerHTML+='<div class="empty"></div>'
 
   for(let d=1;d<=days;d++){
-    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+    const ds=`${cy}-${String(cm+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
     const has=transaksi.some(x=>x.w===ds)
     const isToday=ds===today
     calendar.innerHTML+=`
@@ -111,8 +110,8 @@ function selectDate(d){
   })
 }
 
-function prevMonth(){m--;if(m<0){m=11;y--}renderCalendar()}
-function nextMonth(){m++;if(m>11){m=0;y++}renderCalendar()}
+function prevMonth(){cm--;if(cm<0){cm=11;cy--}renderCalendar()}
+function nextMonth(){cm++;if(cm>11){cm=0;cy++}renderCalendar()}
 
 render()
 renderNote()
